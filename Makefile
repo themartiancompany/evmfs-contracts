@@ -107,6 +107,8 @@ contracts:
 
 	evm-make \
 	  -v \
+	  -f \
+	    "y" \
 	  -C \
 	    "$${PWD}" \
 	  -p \
@@ -114,12 +116,15 @@ contracts:
 	  -b \
 	    "$(SOLIDITY_COMPILER_BACKEND)" \
 	  -w \
-	    "$(BUILD_EVM_MAKE_DIR)"
+	    "$(BUILD_EVM_MAKE_DIR)" || \
+	true
 
 contracts-sources-npm:
 
 	evm-make \
 	  -v \
+	  -f \
+	    "y" \
 	  -C \
 	    "$${PWD}" \
 	  -p \
@@ -138,6 +143,8 @@ contracts-deployments-config-npm:
 
 	evm-make \
 	  -v \
+	  -f \
+	    "y" \
 	  -C \
 	    "$${PWD}" \
 	  -p \
@@ -156,6 +163,8 @@ contracts-deployments-solc-npm:
 
 	evm-make \
 	  -v \
+	  -f \
+	    "y" \
 	  -C \
 	    "$${PWD}" \
 	  -p \
@@ -174,6 +183,8 @@ contracts-deployments-hardhat-npm:
 
 	evm-make \
 	  -v \
+	  -f \
+	    "y" \
 	  -C \
 	    "$${PWD}" \
 	  -p \
@@ -201,12 +212,13 @@ contracts-npm:
 
 npm:
 
-	# SOLIDITY_COMPILER_BACKEND="solc" \
-	# make \
-	#   contracts
-	# SOLIDITY_COMPILER_BACKEND="hardhat" \
-	# make \
-	#   contracts
+	SOLIDITY_COMPILER_BACKEND="hardhat" \
+	make \
+	  contracts || \
+	true
+	SOLIDITY_COMPILER_BACKEND="solc" \
+	make \
+	  contracts
 	make \
 	  contracts-npm
 	mkdir \
@@ -265,6 +277,8 @@ install-contracts-sources:
 
 	evm-make \
 	  -v \
+	  -f \
+	    "y" \
 	  -C \
 	    "$${PWD}" \
 	  -b \
@@ -281,6 +295,8 @@ install-contracts-deployments-config:
 
 	evm-make \
 	  -v \
+	  -f \
+	    "y" \
 	  -C \
 	    "$${PWD}" \
 	  -b \
@@ -297,6 +313,8 @@ install-contracts-deployments-solc:
 
 	evm-make \
 	  -v \
+	  -f \
+	    "y" \
 	  -C \
 	    "$${PWD}" \
 	  -b \
@@ -313,6 +331,8 @@ install-contracts-deployments-hardhat:
 
 	evm-make \
 	  -v \
+	  -f \
+	    "y" \
 	  -C \
 	    "$${PWD}" \
 	  -b \
