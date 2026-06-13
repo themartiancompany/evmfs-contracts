@@ -1,6 +1,6 @@
 { "name": "evmfs-contracts",
   "version":
-    "0.0.1",
+    "0.0.2",
   "description":
     "JavaScript programs and libraries to enable seamless development of native computer applications designed to interact with the Ethereum Virtual Machine File System (EVMFS).",
   "funding": {
@@ -22,29 +22,33 @@
     "webpack.config.cjs"
   ],
   "keywords": [
-    "ur",
-    "themartiancompany",
-    "dogeos",
-    "ethereum",
-    "ethereum-contracts",
-    "user-repository",
-    "smart-contract",
     "evmfs",
-    "hip"
+    "ethereum-virtual-machine-file-system",
+    "ethereum-file-system",
+    "ethereum-fs",
+    "fs",
+    "smart-contract",
+    "ethereum-contracts",
+    "ethereum",
+    "dogeos",
+    "ur",
+    "user-repository",
+    "hip",
+    "themartiancompany"
   ],
   "main":
     "./data-get",
   "homepage":
-    "https://github.com/themartiancompany/ur",
+    "https://github.com/themartiancompany/evmfs",
   "bugs": {
     "url":
-      "https://github.com/themartiancompany/ur-contracts/issues"
+      "https://github.com/themartiancompany/evmfs-contracts/issues"
   },
   "repository": {
     "type":
       "git",
     "url":
-      "git+https://github.com/themartiancompany/ur-contracts.git"
+      "git+https://github.com/themartiancompany/evmfs-contracts.git"
   },
   "license":
     "AGPL-3.0-or-later",
@@ -84,13 +88,13 @@
     "build-contracts":
       "make contracts-npm",
     "build-lib":
-      "npx webpack --mode 'production' --config 'webpack.config.cjs' --stats-error-details && mv 'data-get.js' 'dist/ur-contracts/ur-contracts.js'",
+      "npx webpack --mode 'production' --config 'webpack.config.cjs' --stats-error-details && mv 'data-get.js' 'dist/evmfs-contracts/evmfs-contracts.js'",
     "build":
       "npm run build-contracts && npm run build-lib",
     "publish-npm":
       "npm run build && npm publish --access public",
     "start":
-      "npx safely-serve 'dist/erc20-tools' --port 3000 --https --no-cache",
+      "npx safely-serve 'dist/evmfs-contracts'",
     "test":
       "echo \"Error: no test specified\" && exit 1"
   }
