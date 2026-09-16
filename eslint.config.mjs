@@ -75,6 +75,7 @@ export default defineConfig([
          "error" },
    files:
      [ "**/*.js",
+       "**/data-get",
        `**/${_project}*`,
        `**/lib${_project}`,
      ],

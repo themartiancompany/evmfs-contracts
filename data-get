@@ -30,26 +30,197 @@
 
 const
   _libcrash_module =
-    require(
-      "crash-js");
+    await import(
+      "libcrash-js");
+/* global
+     _file_read */
+const
+  _file_read =
+    _libcrash_module._file_read;
 /* global
      _json_read */
-/* eslint-disable-next-line
-     no-global-assign */
-_file_read =
-  _libcrash_module._file_read;
+const
+  _json_read =
+    _libcrash_module._json_read;
 /* global
-     _json_read */
-/* eslint-disable-next-line
-     no-global-assign */
-_json_read =
-  _libcrash_module._json_read;
+     _msg_error */
+const
+  _msg_error =
+    _libcrash_module._msg_error;
+/* global
+     _msg_info */
+const
+  _msg_info =
+    _libcrash_module._msg_info;
 /* global
      _path_join */
-/* eslint-disable-next-line
-     no-global-assign */
-_path_join =
-  _libcrash_module._path_join;
+const
+  _path_join =
+    _libcrash_module._path_join;
+
+function
+  _contract_name_check(
+    _contract_name) {
+  let
+    _contract_name_get,
+    _msg;
+  const
+    _contract_name_type =
+      typeof(
+        _contract_name);
+  const
+    _default =
+      "FileSystem";
+  _contract_name_get =
+    false;
+  if ( _contract_name_type === "undefined" ) {
+    _msg =
+      "Contract name undefined, setting " +
+      `default, '${_default}'.`;
+    _msg_info(
+      _msg);
+    _contract_name_get =
+      true;
+  }
+  else if ( _contract_name_type === "string" ) {
+    if ( _contract_name.length < 1 ) {
+      _msg =
+        "Contract name not specified, setting " +
+        `default, '${_default}'.`;
+      _msg_info(
+        _msg);
+      _contract_name_get =
+        true;
+    }
+  }
+  else if ( _contract_name_type === "number" ||
+            _contract_name_type === "bigint" ) {
+    true;
+  else {
+    _msg =
+      `Unknown type '${_contract_name_type}' for ` +
+      `variable '_contract_name'.`;
+    _msg_error(
+      _msg,
+      0);
+    throw _msg;
+  }
+  if ( _contract_name_get ) {
+    _contract_name =
+      _default;
+  }
+  return _contract_name;
+}
+
+function
+  _chain_id_check(
+    _chain_id) {
+  let
+    _chain_id_get,
+    _msg;
+  const
+    _chain_id_type =
+      typeof(
+        _chain_id);
+  _chain_id_get =
+    false;
+  if ( _chain_id_type === "undefined" ) {
+    _msg =
+      "Chain ID undefined, setting " +
+      "default, 100.";
+    _msg_info(
+      _msg);
+    _chain_id_get =
+      true;
+  }
+  else if ( _chain_id_type === "string" ) {
+    if ( _chain_id.length < 1 ) {
+    _msg =
+      "Chain ID not specified, setting " +
+      "default, 100.";
+    _msg_info(
+      _msg);
+      _chain_id_get =
+        true;
+    }
+  }
+  else if ( _chain_id_type === "number" ||
+            _chain_id_type === "bigint" ) {
+    true;
+  else {
+    _msg =
+      `Unknown type '${_chain_id_type}' for ` +
+      `variable '_chain_id'.`;
+    _msg_info(
+      _msg);
+  }
+  if ( _chain_id_get ) {
+    _chain_id =
+      100;
+  }
+  return _chain_id;
+}
+
+function
+  _data_type_check(
+    _data_type_check) {
+  let
+    _data_type_get,
+    _msg;
+  const
+    _data_type_type =
+      typeof(
+        _data_type_type);
+  const
+    _default =
+      "abi";
+  _data_type_get =
+    false;
+  if ( _data_type_type === "undefined" ) {
+    _msg =
+      "Data type undefined, setting " +
+      `default, '${_default}'.`;
+    _msg_info(
+      _msg);
+    _data_type_get =
+      true;
+  }
+  else if ( _data_type_type === "string" ) {
+    if ( _dat_type.length < 1 ) {
+    _msg =
+      "Data type not specified, setting " +
+      `default, '${_default}'.`;
+    _msg_info(
+      _msg);
+      _data_type_get =
+        true;
+    }
+  }
+  else if ( _data_type_type === "number" ||
+            _data_type_type === "bigint" ) {
+    true;
+  else {
+    _msg =
+      `Unknown type '${_data_type_type}' for ` +
+      `variable '_data_type'.`;
+    _msg_info(
+      _msg);
+  }
+  if ( _data_type_get ) {
+    _data_type =
+      _default;
+  }
+  return _data_type;
+}
+
+function
+  _output_type_check(
+    _output_type) {
+  const
+    _output_type_type =
+      typeof(
+        _output_type);
+}
 
 function
   _data_get(
@@ -61,24 +232,15 @@ function
   let
     _data,
     _path;
-  if (typeof(
-        _chain_id) == "undefined" ||
-     _chain_id == "" ) {
-    _chain_id =
-      "100";
-  }
-  if (typeof(
-        _contract_name) == "undefined" ||
-     _contract_name == "" ) {
-    _contract_name =
-      "FileSystem";
-  }
-  if (typeof(
-        _data_type) == "undefined" ||
-     _data_type == "" ) {
-    _data_type =
-      "abi";
-  }
+  _chain_id =
+    _chain_id_check(
+      _chain_id);
+  _contract_name =
+    _contract_name_check(
+      _contract_name);
+  _data_type =
+    _data_type_check(
+      _data_type);
   if (typeof(
         _output_type) == "undefined" ||
      _output_type == "" ) {
@@ -193,7 +355,12 @@ function
   return _data;
 }
 
-module.exports = {
-  _data_get:
-    _data_get,
+export {
+  _chain_id_check,
+  _data_get,
 };
+
+// module.exports = {
+//   _data_get:
+//     _data_get,
+// };
