@@ -135,11 +135,11 @@ function
   }
   else if ( _chain_id_type === "string" ) {
     if ( _chain_id.length < 1 ) {
-    _msg =
-      "Chain ID not specified, setting " +
-      "default, 100.";
-    _msg_info(
-      _msg);
+      _msg =
+        "Chain ID not specified, setting " +
+        "default, 100.";
+      _msg_info(
+        _msg);
       _chain_id_get =
         true;
     }
@@ -186,12 +186,12 @@ function
       true;
   }
   else if ( _data_type_type === "string" ) {
-    if ( _dat_type.length < 1 ) {
-    _msg =
-      "Data type not specified, setting " +
-      `default, '${_default}'.`;
-    _msg_info(
-      _msg);
+    if ( _data_type.length < 1 ) {
+      _msg =
+        "Data type not specified, setting " +
+        `default, '${_default}'.`;
+      _msg_info(
+        _msg);
       _data_type_get =
         true;
     }
@@ -216,34 +216,38 @@ function
 function
   _output_type_check(
     _output_type) {
+  let
+    _output_type_get,
+    _msg;
   const
     _output_type_type =
       typeof(
         _output_type);
-}
-
-function
-  _data_get(
-    _contract_name,
-    _data_type,
-    _output_type,
-    _chain_id,
-    _contract_version) {
-  let
-    _data,
-    _path;
-  _chain_id =
-    _chain_id_check(
-      _chain_id);
-  _contract_name =
-    _contract_name_check(
-      _contract_name);
-  _data_type =
-    _data_type_check(
-      _data_type);
-  if (typeof(
-        _output_type) == "undefined" ||
-     _output_type == "" ) {
+  _output_type_get =
+    false;
+  if ( _output_type_type == "undefined" ) {
+    _output_type_get =
+      true;
+  }
+  else if ( _output_type_type == "string" ) {
+    if ( _output_type.length < 1 ) {
+      _msg =
+        "Output type not specified, setting " +
+        `default value.`;
+      _msg_info(
+        _msg);
+      _output_type_get =
+        true;
+    }
+  }
+  else {
+    _msg =
+      `Unknown type '${_output_type_type}' for ` +
+      `variable '_output_type'.`;
+    _msg_info(
+      _msg);
+  }
+  if ( _output_type_get ) {
     if ( _data_type == "contract-address" ||
          _data_type == "evm-version" ||
          _data_type == "solc-version" ) {
@@ -255,6 +259,78 @@ function
         "path";
     }
   }
+  return _output_type;
+}
+
+function
+  _contract_version_check(
+    _contract_version) {
+  let
+    _contract_version_get,
+    _msg;
+  const
+    _contract_version_type =
+      typeof(
+        _contract_version);
+  _contract_version_get =
+    false;
+  _default =
+    "";
+  if ( _contract_version_type == "undefined" ) {
+    _contract_version_get =
+      true;
+  }
+  else if ( _contract_version_type == "string" ) {
+    if ( _contract_version.length < 1 ) {
+      _msg =
+        "Output type not specified, setting " +
+        `default value.`;
+      _msg_info(
+        _msg);
+      _contract_version_get =
+        true;
+    }
+  }
+  else {
+    _msg =
+      `Unknown type '${_contract_version_type}' for ` +
+      `variable '_contract_version'.`;
+    _msg_info(
+      _msg);
+  }
+  if ( _contract_version_get ) {
+      _contract_version =
+        _default;
+  }
+  return _contract_version;
+}
+
+function
+  _data_get(
+    _contract_name,
+    _data_type,
+    _output_type,
+    _chain_id,
+    _contract_version) {
+  let
+    _data,
+    _path,
+    _version;
+  _chain_id =
+    _chain_id_check(
+      _chain_id);
+  _contract_name =
+    _contract_name_check(
+      _contract_name);
+  _data_type =
+    _data_type_check(
+      _data_type);
+  _output_type =
+    _output_type_check(
+      _output_type);
+  _contract_version =
+    _contract_version_check(
+      _contract_version);
   const
     _deployments_dir =
       `deployments/${_contract_name}/${_chain_id}`;
@@ -262,13 +338,22 @@ function
     _path =
       _path_join( [
         __dirname,
-        `${deployments_dir}/config.json`
+        `${_deployments_dir}/config.json`
+    ]);
+  }
+  if ( _data_type == "version" ) {
+    _path =
+      _path_join( [
+        __dirname,
+        `${_deployments_dir}/config.json`
     ]);
   }
   else if ( _data_type == "abi" ) {
     _path =
       _path_join( [
         __dirname,
+        _deployments_dir,
+        _contract_version,
         `${_contract_name}.abi.json`
     ]);
   }
@@ -283,6 +368,8 @@ function
     _path =
       _path_join( [
         __dirname,
+        _deployments_dir,
+        _contract_version,
         `${_contract_name}.bin`
     ]);
   }
@@ -290,6 +377,8 @@ function
     _path =
       _path_join( [
         __dirname,
+        _deployments_dir,
+        _contract_version,
         `${_contract_name}.json`
     ]);
   }
@@ -299,7 +388,8 @@ function
         `Unknown data type '${_data_type}'.`;
     _msg_error(
       _msg,
-      1);
+      0);
+    throw _msg;
   }
   if ( _output_type == "path" ) {
     _data =
@@ -344,6 +434,16 @@ function
           _path)[
             "solc-version"];
     }
+    else if ( _data_type == "version" ) {
+      const
+        _addresses =
+          _json_read(
+            _path)[
+              "contract-address"];
+      _data =
+        Object.keys(
+          _addresses);
+    }
     else {
       _msg =
         `Uknown data type '${_data_type}'.`;
@@ -352,15 +452,41 @@ function
         1);
     }
   }
+  if ( _contract_version != "" ) {
+    if ( _data_type == "contract-address" ||
+         _data_type == "evm-version" ||
+         _data_type == "solc-version" ) {
+    const
+      _data_filtered = {
+        _contract_version:
+          _data[
+            _contract_version]
+      };
+    _data =
+      _data_filtered;
+    }
+  }
   return _data;
 }
 
 export {
   _chain_id_check,
+  _data_type_check,
+  _contract_name_check,
   _data_get,
+  _output_type_check
 };
 
 // module.exports = {
+//   _chain_id_check:
+//     _chain_id_check,
+//   _data_type_check:
+//     _data_type_check,
+//   _contract_name_check:
+//     _contract_name_check,
 //   _data_get:
 //     _data_get,
+//   _output_type_check:
+//     _output_type_check,
+
 // };
