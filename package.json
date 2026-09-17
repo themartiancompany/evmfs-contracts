@@ -64,7 +64,7 @@
     "crash-js-webpack":
       "^0.0.78",
     "evm-make":
-      "^0.0.3",
+      "^0.0.4",
     "flatted":
       "^3.2.9",
     "eslint":
