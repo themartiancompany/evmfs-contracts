@@ -201,6 +201,7 @@ function
   else if ( _data_type_type === "number" ||
             _data_type_type === "bigint" ) {
     true;
+  }
   else {
     _msg =
       `Unknown type '${_data_type_type}' for ` +
