@@ -287,8 +287,9 @@ function
         _contract_version);
   _contract_version_get =
     false;
-  _default =
-    "";
+  const
+    _default =
+      "";
   if ( _contract_version_type === "undefined" ) {
     _contract_version_get =
       true;
@@ -326,6 +327,8 @@ function
     _chain_id,
     _contract_version) {
   let
+    __dirname,
+    _script_dirname,
     _data,
     _path,
     _version;
@@ -344,27 +347,37 @@ function
   _contract_version =
     _contract_version_check(
       _contract_version);
+  _script_dirname =
+    __dirname;
+  const
+    __dirname_type =
+      typeof(
+        _script_dirname);
+  if ( __dirname_type === "undefined" ) {
+    _script_dirname =
+      import.meta.dirname;
+  }
   const
     _deployments_dir =
       `deployments/${_contract_name}/${_chain_id}`;
   if ( _data_type == "contract-address" ) {
     _path =
       _path_join( [
-        __dirname,
+        _script_dirname,
         `${_deployments_dir}/config.json`
     ]);
   }
   if ( _data_type == "version" ) {
     _path =
       _path_join( [
-        __dirname,
+        _script_dirname,
         `${_deployments_dir}/config.json`
     ]);
   }
   else if ( _data_type == "abi" ) {
     _path =
       _path_join( [
-        __dirname,
+        _script_dirname,
         _deployments_dir,
         _contract_version,
         `${_contract_name}.abi.json`
@@ -373,14 +386,14 @@ function
   else if ( _data_type == "source" ) {
     _path =
       _path_join( [
-        __dirname,
+        _script_dirname,
         `${_contract_name}.sol`
     ]);
   }
   else if ( _data_type == "bytecode" ) {
     _path =
       _path_join( [
-        __dirname,
+        _script_dirname,
         _deployments_dir,
         _contract_version,
         `${_contract_name}.bin`
@@ -389,7 +402,7 @@ function
   else if ( _data_type == "compiler-output" ) {
     _path =
       _path_join( [
-        __dirname,
+        _script_dirname,
         _deployments_dir,
         _contract_version,
         `${_contract_name}.json`
