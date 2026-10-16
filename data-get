@@ -367,7 +367,7 @@ function
         `${_deployments_dir}/config.json`
     ]);
   }
-  if ( _data_type == "version" ) {
+  else if ( _data_type == "version" ) {
     _path =
       _path_join( [
         _script_dirname,
