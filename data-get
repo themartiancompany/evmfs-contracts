@@ -33,6 +33,11 @@ const
     await import(
       "libcrash-js");
 /* global
+     _echo2 */
+const
+  _echo2 =
+    _libcrash_module._echo2;
+/* global
      _file_read */
 const
   _file_read =
@@ -320,6 +325,75 @@ function
 }
 
 function
+  _data_filter(
+    _data,
+    _contract_version,
+    _data_type) {
+  let
+    _data_filter,
+    _msg;
+  _data_filter =
+    false;
+  const
+    _contract_version_type =
+      typeof(
+        _contract_version);
+  if ( _contract_version_type === "string" ) {
+    if ( 0 < _contract_version.length ) {
+      _data_filter =
+        true;
+    }
+  }
+  else if ( _contract_version_type === "number" ) {
+    _msg =
+      "Contract version " +
+      `'${_contract_version}' is a number,` +
+      `converting onto string.`;
+    _msg_warning(
+      _msg);
+    _contract_version =
+      String(
+        _contract_version);
+    _data_filter =
+      true;
+  }
+  else {
+    _msg =
+      `Unknown type '${_contract_version}' ` +
+      `for variable contract version.`;
+    _msg_error(
+      _msg,
+      0);
+    throw _msg;
+  }
+  if ( _data_filter ) {
+    _msg =
+      `Filtering '${_data_type}' ` +
+      `data type about '${_contract_version}' ` +
+      "contract version.";
+    _msg_info(
+      _msg);
+    if ( _data_type === "contract-address" ||
+         _data_type === "evm-version" ||
+         _data_type === "solc-version" ) {
+      _echo2(
+        _contract_version);
+      _echo2(
+        _data);
+      _echo2(
+        _data[
+          _contract_version]);
+      _data = {
+        _contract_version:
+          _data[
+            _contract_version]
+      };
+    }
+  }
+  return _data;
+}
+
+function
   _data_get(
     _contract_name,
     _data_type,
@@ -330,6 +404,8 @@ function
     __dirname,
     _script_dirname,
     _data,
+    _data_filtered,
+    _msg,
     _path,
     _version;
   _chain_id =
@@ -360,6 +436,11 @@ function
   const
     _deployments_dir =
       `deployments/${_contract_name}/${_chain_id}`;
+  _msg =
+    "Data type is " +
+    `'${_data_type}'.`;
+  _msg_info(
+    _msg);
   if ( _data_type == "contract-address" ) {
     _path =
       _path_join( [
@@ -409,9 +490,8 @@ function
     ]);
   }
   else {
-    const
-      _msg =
-        `Unknown data type '${_data_type}'.`;
+    _msg =
+      `Unknown data type '${_data_type}'.`;
     _msg_error(
       _msg,
       0);
@@ -422,6 +502,11 @@ function
       _path;
   }
   else if ( _output_type == "object" ) {
+    _msg =
+      "Reading at path " +
+      `'${_path}'`;
+    _msg_info(
+      _msg);
     if ( _data_type == "abi" ) {
       _data =
         _json_read(
@@ -478,20 +563,16 @@ function
         1);
     }
   }
-  if ( _contract_version != "" ) {
-    if ( _data_type == "contract-address" ||
-         _data_type == "evm-version" ||
-         _data_type == "solc-version" ) {
-    const
-      _data_filtered = {
-        _contract_version:
-          _data[
-            _contract_version]
-      };
-    _data =
-      _data_filtered;
-    }
-  }
+  const
+    _data_filter_args = [
+      _data,
+      _contract_version,
+      _data_type
+    ];
+  _data =
+    _data_filter.apply(
+      null,
+      _data_filter_args);
   return _data;
 }
 
