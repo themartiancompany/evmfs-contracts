@@ -58,6 +58,11 @@ const
   _msg_info =
     _libcrash_module._msg_info;
 /* global
+     _msg_warning */
+const
+  _msg_warning =
+    _libcrash_module._msg_warning;
+/* global
      _path_join */
 const
   _path_join =
@@ -310,6 +315,13 @@ function
         true;
     }
   }
+  else if ( _contract_version_type === "number" ) {
+    _msg =
+      `Contract version '${_contract_version}' ` +
+      `is a number, converting into string.`;
+    _msg_warning(
+      _msg);
+  }
   else {
     _msg =
       `Unknown type '${_contract_version_type}' for ` +
@@ -331,6 +343,7 @@ function
     _data_type) {
   let
     _data_filter,
+    _data_new,
     _msg;
   _data_filter =
     false;
@@ -342,6 +355,11 @@ function
     if ( 0 < _contract_version.length ) {
       _data_filter =
         true;
+      _msg =
+        `Target contract version is ` +
+        `'${_contract_version}'.`;
+      _msg_info(
+        _msg);
     }
   }
   else if ( _contract_version_type === "number" ) {
@@ -376,18 +394,14 @@ function
     if ( _data_type === "contract-address" ||
          _data_type === "evm-version" ||
          _data_type === "solc-version" ) {
-      _echo2(
-        _contract_version);
-      _echo2(
-        _data);
-      _echo2(
-        _data[
-          _contract_version]);
-      _data = {
-        _contract_version:
+      _data_new =
+        {};
+      _data_new[
+        _contract_version] =
           _data[
-            _contract_version]
-      };
+            _contract_version];
+      _data =
+        _data_new;
     }
   }
   return _data;
