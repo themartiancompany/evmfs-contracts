@@ -267,7 +267,7 @@ install-scripts:
 
 	if [[ "$(_NPM)" == "false" ]]; then \
 	  $(_INSTALL_DIR) \
-	    "$(LIB_DIR)/nodejs"; \
+	    "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT_NPM)/nodejs"; \
 	  for _file \
 	    in $$( \
 	         cat \
@@ -442,6 +442,7 @@ install-doc:
 uninstall:
 
 	rm \
+	  -rf \
 	  "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT)/contracts" \
 	  "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT)/deployments" \
 	  "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT_NPM)" \
