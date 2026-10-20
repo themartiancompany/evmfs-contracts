@@ -48,6 +48,7 @@ CONTRACTS_TARGETS_ALL=\
   contracts-deployments-hardhat-npm \
   contracts-deployments-solc-npm \
   contracts-sources-npm
+
 PHONY_TARGETS=\
   check \
   $(CONTRACTS_TARGETS_ALL) \
@@ -58,7 +59,8 @@ PHONY_TARGETS=\
   install-doc \
   install-npm \
   install-scripts \
-  shellcheck
+  shellcheck \
+  uninstall
 
 _INSTALL_FILE=\
   install \
@@ -69,12 +71,19 @@ _INSTALL_EXE=\
 _INSTALL_DIR=\
   install \
     -vdm755
+_MAKE_LINK=\
+  ln \
+    -sv
+_MAKE_EXE=\
+  chmod \
+    755
 
 DOC_FILES=\
   $(wildcard \
       *.rst) \
   $(wildcard \
       *.md)
+
 NPM_FILES=\
   "README.md" \
   "COPYING" \
@@ -259,18 +268,19 @@ install-scripts:
 	if [[ "$(_NPM)" == "false" ]]; then \
 	  $(_INSTALL_DIR) \
 	    "$(LIB_DIR)/nodejs"; \
-	  cp \
-	    -r \
-	    $$(printf \
-	         "$${PWD}/%s " \
-	         $$(cat \
-	              "$${PWD}/package.json" | \
-	              jq \
-	                --raw-output \
-	                '.files[]')) \
-	    "$(LIB_DIR)/nodejs"; \
-	  $(_MAKE_EXE) \
-	    "$(LIB_DIR)/nodejs/$(_PROJECT_NPM)"; \
+	  for _file \
+	    in $$( \
+	         cat \
+	           "$${PWD}/package.json" | \
+	             jq \
+	               --raw-output \
+	               '.files[]'); do \
+            cp \
+	      -r \
+	      "build/$${_file}" \
+	      "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT_NPM)/nodejs" || \
+	    true; \
+          done; \
 	  for _program in \
 	    $(_PROGRAMS); do \
 	    if [[ ! -s "$(BIN_DIR)/$${_program}" && \
@@ -286,33 +296,26 @@ install-scripts:
 	  if [[ ! -s "$(LIB_DIR)/node_modules" ]]; then \
 	    $(_MAKE_LINK) \
 	      "$(PREFIX)/lib/node_modules" \
-	      "$(LIB_DIR)/nodejs/node_modules"; \
+	      "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT_NPM)/nodejs/node_modules"; \
 	  fi; \
 	  rm \
 	    -rf \
-	    "$(DESTDIR)$(PREFIX)/lib/node_modules/$(_PROJECT)" \
 	    "$(DESTDIR)$(PREFIX)/lib/node_modules/$(_PROJECT_NPM)"; \
-	  if [[ ! -s "$(DESTDIR)$(PREFIX)/lib/node_modules/$(_PROJECT)" ]]; then \
-	    $(_MAKE_LINK) \
-	      "$(PREFIX)/lib/$(_PROJECT_NPM)/nodejs" \
-	      "$(DESTDIR)$(PREFIX)/lib/node_modules/$(_PROJECT)"; \
-	  fi; \
 	  if [[ ! -s "$(DESTDIR)$(PREFIX)/lib/node_modules/$(_PROJECT_NPM)" ]]; then \
 	    $(_MAKE_LINK) \
 	      "$(PREFIX)/lib/$(_PROJECT_NPM)/nodejs" \
-	      "$(DESTDIR)$(PREFIX)/lib/node_modules/$(_PROJECT_NPM)" || \
+	      "$(DESTDIR)$(PREFIX)/lib/node_modules/$(_PROJECT_NPM)"; \
+	  fi; \
+	  if [[ ! -s "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT)/contracts" ]]; then \
+	    $(_MAKE_LINK) \
+	      "$(PREFIX)/lib/$(_PROJECT_NPM)/nodejs/contracts" \
+	      "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT)/contracts" || \
 	      true; \
 	  fi; \
-	  if [[ ! -s "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT)" ]]; then \
+	  if [[ ! -s "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT)/deployments" ]]; then \
 	    $(_MAKE_LINK) \
-	      "$(PREFIX)/lib/$(_PROJECT_NPM)/nodejs" \
-	      "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT)" || \
-	      true; \
-	  fi; \
-	  if [[ ! -s "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT_NPM)" ]]; then \
-	    $(_MAKE_LINK) \
-	      "$(PREFIX)/lib/$(_PROJECT_NPM)/nodejs" \
-	      "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT_NPM)" || \
+	      "$(PREFIX)/lib/$(_PROJECT_NPM)/nodejs/deployments" \
+	      "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT)/deployments" || \
 	      true; \
 	  fi; \
 	elif [[ "$(_NPM)" == "true" ]]; then \
@@ -436,9 +439,13 @@ install-doc:
 	  -t \
 	  $(DOC_DIR)
 
-uninstall-contracts:
+uninstall:
 
-	true
+	rm \
+	  "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT)/contracts" \
+	  "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT)/deployments" \
+	  "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT_NPM)" \
+	  "$(DESTDIR)$(PREFIX)/lib/node_modules/$(_PROJECT_NPM)"
 
 
 .PHONY: $(PHONY_TARGETS)
