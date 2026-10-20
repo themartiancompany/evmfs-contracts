@@ -291,7 +291,7 @@ install-scripts:
 	    fi; \
 	  done; \
 	  rm \
-	    "$(LIB_DIR)/node_modules" || \
+	    "$(DESTDIR)$(PREFIX)/lib/$(_PROJECT_NPM)/node_modules" || \
 	    true; \
 	  if [[ ! -s "$(LIB_DIR)/node_modules" ]]; then \
 	    $(_MAKE_LINK) \
